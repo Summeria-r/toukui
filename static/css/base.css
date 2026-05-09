@@ -1,0 +1,141 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    font-family: "Microsoft YaHei", sans-serif;
+}
+
+/* 侧边栏 */
+.sidebar {
+    width: 240px;
+    background: linear-gradient(180deg, #001529 0%, #0A2540 100%);
+    color: #FFFFFF;
+    padding-top: 20px;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #FFFFFF;
+}
+
+.sidebar a {
+    display: block;
+    color: #D1D5DB;
+    padding: 12px 20px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.sidebar a:hover {
+    background: #2563EB;
+    color: #FFFFFF;
+}
+
+.sidebar a.active {
+    background: #1E3A5F;
+    color: #FFFFFF;
+}
+
+.sidebar a i {
+    margin-right: 8px;
+    width: 14px;
+    text-align: center;
+}
+
+/* 主内容区 */
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    height: 60px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    line-height: 60px;
+    padding: 0 20px;
+    font-size: 16px;
+}
+
+.content {
+    flex: 1;
+    background: #f5f7fa;
+    padding: 20px;
+    overflow: auto;
+}
+
+.card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* 表格 */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #eee;
+}
+
+table th {
+    background: #fafafa;
+}
+
+/* 按钮 */
+.btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+
+
+.btn-success {
+    background: linear-gradient(135deg, #86efac, #4ade80);
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(74, 222, 128, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    box-shadow: 0 4px 8px rgba(74, 222, 128, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #fca5a5, #f87171);
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(248, 113, 113, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #f87171, #ef4444);
+    box-shadow: 0 4px 8px rgba(248, 113, 113, 0.4);
+}
+
+/* 工具条 */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    align-items: center;
+}

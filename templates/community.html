@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="/static/css/community.css">
+{% endblock %}
+
+{% block content %}
+<div class="community-management">
+    <div class="page-header">
+        <h2>车友圈内容审核</h2>
+        <a href="/community/export" class="btn btn-primary">导出Excel</a>
+    </div>
+    
+    <div class="search-filter">
+        <form method="get" action="/community">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="search">帖子标题</label>
+                    <input type="text" id="search" name="search" value="{{ search or '' }}" placeholder="请输入帖子标题">
+                </div>
+                <div class="form-group">
+                    <label for="status">审核状态</label>
+                    <select id="status" name="status">
+                        <option value="" {% if not status %}selected{% endif %}>全部</option>
+                        <option value="pending" {% if status == 'pending' %}selected{% endif %}>待审核</option>
+                        <option value="approved" {% if status == 'approved' %}selected{% endif %}>已通过</option>
+                        <option value="rejected" {% if status == 'rejected' %}selected{% endif %}>已拒绝</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="start_date">开始日期</label>
+                    <input type="date" id="start_date" name="start_date" value="{{ start_date or '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="end_date">结束日期</label>
+                    <input type="date" id="end_date" name="end_date" value="{{ end_date or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>时间范围</label>
+                    <div>
+                        <button type="button" class="btn btn-sm" onclick="setTimeRange('today')">今天</button>
+                        <button type="button" class="btn btn-sm" onclick="setTimeRange('week')">本周</button>
+                        <button type="button" class="btn btn-sm" onclick="setTimeRange('month')">本月</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="page_size">每页条数</label>
+                    <select id="page_size" name="page_size">
+                        <option value="10" {% if page_size == 10 %}selected{% endif %}>10</option>
+                        <option value="20" {% if page_size == 20 %}selected{% endif %}>20</option>
+                        <option value="50" {% if page_size == 50 %}selected{% endif %}>50</option>
+                        <option value="100" {% if page_size == 100 %}selected{% endif %}>100</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-search">搜索</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <div class="community-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>发布用户</th>
+                    <th>标题</th>
+                    <th>发布时间</th>
+                    <th>审核状态</th>
+                    <th>审核时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in posts %}
+                <tr data-post-id="{{ post.id }}">
+                    <td>{{ post.id }}</td>
+                    <td>{{ post.user }}</td>
+                    <td>{{ post.title }}</td>
+                    <td>{{ post.create_time }}</td>
+                    <td>
+                        {% if post.status == 'pending' %}
+                        <span class="status status-pending">待审核</span>
+                        {% elif post.status == 'approved' %}
+                        <span class="status status-approved">已通过</span>
+                        {% elif post.status == 'rejected' %}
+                        <span class="status status-rejected">已拒绝</span>
+                        {% else %}
+                        <span class="status">{{ post.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ post.review_time or '-' }}</td>
+                    <td>
+                        {% if post.status == 'pending' %}
+                        <button class="btn btn-sm btn-success" onclick="approvePost({{ post.id }})"><i class="fa fa-check"></i> 同意</button>
+                        <button class="btn btn-sm btn-danger" onclick="rejectPost({{ post.id }})"><i class="fa fa-times"></i> 拒绝</button>
+                        {% endif %}
+                        <button class="btn btn-sm btn-info" onclick="viewDetail({{ post.id }})"><i class="fa fa-eye"></i> 查看详情</button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="no-data">暂无数据</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="pagination">
+        <div class="page-info">
+            共 {{ total }} 条记录，第 {{ page }}/{{ total_pages }} 页
+        </div>
+        <div class="page-links">
+            <a href="/community?page=1&page_size={{ page_size }}{% if status %}&status={{ status }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}" class="page-link" {% if page == 1 %}disabled{% endif %}>首页</a>
+            <a href="/community?page={{ page-1 }}&page_size={{ page_size }}{% if status %}&status={{ status }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}" class="page-link" {% if page == 1 %}disabled{% endif %}>上一页</a>
+            
+            {% for i in range(1, total_pages + 1) %}
+            {% if i >= page - 2 and i <= page + 2 %}
+            <a href="/community?page={{ i }}&page_size={{ page_size }}{% if status %}&status={{ status }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}" class="page-link {% if i == page %}active{% endif %}">{{ i }}</a>
+            {% endif %}
+            {% endfor %}
+            
+            <a href="/community?page={{ page+1 }}&page_size={{ page_size }}{% if status %}&status={{ status }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}" class="page-link" {% if page == total_pages %}disabled{% endif %}>下一页</a>
+            <a href="/community?page={{ total_pages }}&page_size={{ page_size }}{% if status %}&status={{ status }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}" class="page-link" {% if page == total_pages %}disabled{% endif %}>末页</a>
+        </div>
+    </div>
+</div>
+
+<!-- 拒绝帖子模态框 -->
+<div id="rejectModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>拒绝帖子</h3>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form onsubmit="submitRejectForm(); return false;">
+                <input type="hidden" id="rejectPostId" name="post_id">
+                <div class="form-group">
+                    <label for="rejectReason">拒绝理由</label>
+                    <textarea id="rejectReason" name="reject_reason" required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel">取消</button>
+                    <button type="submit" class="btn btn-danger">拒绝</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 查看详情模态框 -->
+<div id="detailModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>帖子详情</h3>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body detail-content">
+            <h4 class="post-title" id="detailTitle"></h4>
+            <div class="post-meta">
+                <span>发布用户: <span id="detailUser"></span></span> | 
+                <span>发布时间: <span id="detailCreateTime"></span></span>
+            </div>
+            <div class="post-content" id="detailContent"></div>
+            <div class="post-images" id="detailImages"></div>
+            <div class="post-stats">
+                <span>点赞数: <span id="detailLikes"></span></span> | 
+                <span>评论数: <span id="detailComments"></span></span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-cancel">关闭</button>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/community.js"></script>
+{% endblock %}

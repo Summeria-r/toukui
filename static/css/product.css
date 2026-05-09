@@ -1,0 +1,362 @@
+.product-management {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.page-header h2 {
+    margin: 0;
+    color: #333;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+}
+
+.search-filter {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: end;
+    justify-content: space-between;
+}
+
+.form-row .form-group:last-child {
+    flex: 0 0 auto;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #555;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.btn-search {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-search:hover {
+    background-color: #218838;
+}
+
+.product-table {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.product-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.product-table th,
+.product-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.product-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    user-select: none;
+}
+
+.product-table th:hover {
+    background-color: #e9ecef;
+}
+
+.product-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.product-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.status {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-on_sale {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-off_sale {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-sold_out {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.stock-warning {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+.btn-edit {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.btn-edit:hover {
+    background-color: #e0a800;
+}
+
+.btn-toggle {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-toggle:hover {
+    background-color: #138496;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+}
+
+.no-data {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.page-info {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.page-links {
+    display: flex;
+    gap: 5px;
+}
+
+.page-link {
+    padding: 6px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #007bff;
+    transition: all 0.3s;
+}
+
+.page-link:hover {
+    background-color: #f8f9fa;
+    border-color: #007bff;
+}
+
+.page-link.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.page-link:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-link:disabled:hover {
+    background-color: transparent;
+    border-color: #dee2e6;
+}
+
+/* 模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.close {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-body {
+    margin-bottom: 20px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #dee2e6;
+}
+
+.btn-cancel {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background-color: #5a6268;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .pagination {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .page-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .modal-content {
+        margin: 25% auto;
+        width: 95%;
+    }
+    
+    .product-table table {
+        font-size: 12px;
+    }
+    
+    .product-table th,
+    .product-table td {
+        padding: 8px;
+    }
+    
+    .product-image {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .btn-sm {
+        padding: 2px 4px;
+        font-size: 10px;
+        margin-right: 2px;
+    }
+}

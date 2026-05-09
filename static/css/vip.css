@@ -1,0 +1,317 @@
+/* 会员管理页面样式 */
+
+.vip-management {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.page-header h2 {
+    margin: 0;
+    color: #333;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.btn-primary {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #218838;
+}
+
+/* 搜索筛选区 */
+.search-filter {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: end;
+    justify-content: space-between;
+}
+
+.form-row .form-group:last-child {
+    flex: 0 0 auto;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #555;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.btn-search {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-search:hover {
+    background-color: #218838;
+}
+
+/* 表格区 */
+.vip-table {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.vip-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.vip-table th,
+.vip-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.vip-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+}
+
+.vip-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* 状态标签 */
+.status {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-active {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-inactive {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-frozen {
+    background-color: #d6f0ff;
+    color: #003a60;
+}
+
+/* 操作按钮 */
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+/* 深粉色删除按钮，和冰冻按钮质感统一 */
+ .btn-delete {
+   position: relative;
+   display: inline-flex;
+   align-items: center;
+   gap: 4px;
+   padding: 4px 8px;
+   border: none;
+   border-radius: 4px;
+   /* 加深的清透粉渐变，和蓝色冰冻按钮的高光感匹配 */
+   background: linear-gradient(180deg, #ff8fb3 0%, #ff4d88 50%, #e62e6b 100%);
+   color: #fff;
+   font-size: 12px;
+   cursor: pointer;
+   box-shadow:
+     0 2px 6px rgba(230, 46, 107, 0.35),
+     inset 0 2px 4px rgba(255, 255, 255, 0.5),
+     inset 0 -1px 2px rgba(150, 20, 60, 0.2);
+   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+   margin-right: 5px;
+ }
+ 
+ /* 清透高光效果，和冰冻按钮的冰面感呼应 */
+ .btn-delete::after {
+   content: "";
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   height: 45%;
+   background: linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 100%);
+   border-radius: 4px 4px 0 0;
+   pointer-events: none;
+ }
+
+.btn-freeze {
+   position: relative;
+   display: inline-flex;
+   align-items: center;
+   gap: 4px;
+   padding: 4px 8px;
+   border: 1px solid #7fc8f0;
+   border-radius: 4px;
+   background: linear-gradient(180deg, #d6f0ff 0%, #90d8ff 50%, #50b8ff 100%);
+   color: #003a60;
+   font-size: 12px;
+   cursor: pointer;
+   box-shadow:
+     0 2px 4px rgba(0, 100, 180, 0.25),
+     inset 0 2px 4px rgba(255, 255, 255, 0.6),
+     inset 0 -1px 2px rgba(0, 80, 140, 0.15);
+   margin-right: 5px;
+ }
+ 
+ /* 冰面高光纹理 */
+ .btn-freeze::after {
+   content: "";
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   height: 40%;
+   background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%);
+   border-radius: 3px 3px 0 0;
+   pointer-events: none;
+ }
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+/* 无数据提示 */
+.no-data {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+}
+
+/* 分页 */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.page-info {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.page-links {
+    display: flex;
+    gap: 5px;
+}
+
+.page-link {
+    padding: 6px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #007bff;
+    transition: all 0.3s;
+}
+
+.page-link:hover {
+    background-color: #f8f9fa;
+    border-color: #007bff;
+}
+
+.page-link.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.page-link:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-link:disabled:hover {
+    background-color: transparent;
+    border-color: #dee2e6;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .pagination {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .page-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .vip-table table {
+        font-size: 12px;
+    }
+    
+    .vip-table th,
+    .vip-table td {
+        padding: 8px;
+    }
+    
+    .btn-sm {
+        padding: 2px 4px;
+        font-size: 10px;
+        margin-right: 2px;
+    }
+}

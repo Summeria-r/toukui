@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>芯盾视界管理系统</title>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+<!-- 侧边栏 -->
+<div class="sidebar">
+    <h2>芯盾视界管理系统</h2>
+    <a href="http://192.168.199.129:8100/#/de-link/34Oz42xw"><i class="fa fa-chart-bar"></i> 数据大屏</a>
+    <a href="/user" {% if request.url.path == '/user' %}class="active"{% endif %}><i class="fa fa-user"></i> 用户管理</a>
+    <a href="/vip" {% if request.url.path == '/vip' %}class="active"{% endif %}><i class="fa fa-crown"></i> 会员管理</a>
+    <a href="/community" {% if request.url.path == '/community' %}class="active"{% endif %}><i class="fa fa-comments"></i> 车友圈审核</a>
+    <a href="/product" {% if request.url.path == '/product' %}class="active"{% endif %}><i class="fa fa-shopping-bag"></i> 商品管理</a>
+    <a href="/video" {% if request.url.path == '/video' %}class="active"{% endif %}><i class="fa fa-video"></i> 视频管理</a>
+    <a href="/logout" {% if request.url.path == '/logout' %}class="active"{% endif %}><i class="fa fa-sign-out-alt"></i> 退出登录</a>
+</div>
+
+<!-- 主内容 -->
+<div class="main">
+    <div class="header">{% block title %}{% endblock %}</div>
+    <div class="content">
+        <div class="card">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</div> 
+
+<script src="/static/js/base.js"></script>
+</body>
+</html>

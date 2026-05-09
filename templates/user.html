@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="/static/css/user.css">
+{% endblock %}
+{% block content %}
+<div class="user-management">
+    <div class="page-header">
+        <h2>用户管理</h2>
+        <a href="/user/export" class="btn btn-primary">导出Excel</a>
+    </div>
+    
+    <div class="search-filter">
+        <form method="get" action="/user">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="search">搜索关键词</label>
+                    <input type="text" id="search" name="search" value="{{ search or '' }}" placeholder="请输入ID或账号">
+                </div>
+                <div class="form-group">
+                    <label for="status">用户状态</label>
+                    <select id="status" name="status">
+                        <option value="" {% if not status %}selected{% endif %}>全部</option>
+                        <option value="正常" {% if status == '正常' %}selected{% endif %}>正常</option>
+                        <option value="禁用" {% if status == '禁用' %}selected{% endif %}>禁用</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="page_size">每页条数</label>
+                    <select id="page_size" name="page_size">
+                        <option value="10" {% if page_size == 10 %}selected{% endif %}>10</option>
+                        <option value="20" {% if page_size == 20 %}selected{% endif %}>20</option>
+                        <option value="50" {% if page_size == 50 %}selected{% endif %}>50</option>
+                        <option value="100" {% if page_size == 100 %}selected{% endif %}>100</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-search">搜索</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <div class="user-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>账号</th>
+                    <th>密码</th>
+                    <th>注册时间</th>
+                    <th>最后登录时间</th>
+                    <th>用户状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.account }}</td>
+                    <td>{{ user.password }}</td>
+                    <td>{{ user.create_time.strftime('%Y-%m-%d %H:%M:%S') if user.create_time else '-' }}</td>
+                    <td>{{ user.update_time.strftime('%Y-%m-%d %H:%M:%S') if user.update_time else '-' }}</td>
+                    <td>
+                        {% if user.status == 0 or user.status == "0" %}
+                        <span class="status status-normal">正常</span>
+                        {% elif user.status == 1 or user.status == "1" %}
+                        <span class="status status-disabled">禁用</span>
+                        {% else %}
+                        <span class="status">{{ user.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-edit">编辑</button>
+                        <button class="btn btn-sm btn-disable">禁用</button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="no-data">暂无数据</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="pagination">
+        <div class="page-info">
+            共 {{ total }} 条记录，第 {{ page }}/{{ total_pages }} 页
+        </div>
+        <div class="page-links">
+            <a href="/user?page=1&page_size={{ page_size }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}" class="page-link" {% if page == 1 %}disabled{% endif %}>首页</a>
+            <a href="/user?page={{ page-1 }}&page_size={{ page_size }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}" class="page-link" {% if page == 1 %}disabled{% endif %}>上一页</a>
+            
+            {% for i in range(1, total_pages + 1) %}
+            {% if i >= page - 2 and i <= page + 2 %}
+            <a href="/user?page={{ i }}&page_size={{ page_size }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}" class="page-link {% if i == page %}active{% endif %}">{{ i }}</a>
+            {% endif %}
+            {% endfor %}
+            
+            <a href="/user?page={{ page+1 }}&page_size={{ page_size }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}" class="page-link" {% if page == total_pages %}disabled{% endif %}>下一页</a>
+            <a href="/user?page={{ total_pages }}&page_size={{ page_size }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}" class="page-link" {% if page == total_pages %}disabled{% endif %}>末页</a>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑用户模态框 -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>编辑用户信息</h3>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="editForm" method="post" action="/user/update">
+                <input type="hidden" id="userId" name="user_id">
+                <div class="form-group">
+                    <label for="editAccount">账号</label>
+                    <input type="text" id="editAccount" name="account" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editPassword">密码</label>
+                    <input type="text" id="editPassword" name="password" placeholder="留空表示不修改密码">
+                </div>
+                <div class="form-group">
+                    <label for="editStatus">用户状态</label>
+                    <select id="editStatus" name="status">
+                        <option value="0">正常</option>
+                        <option value="1">禁用</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/user.js"></script>
+{% endblock %}

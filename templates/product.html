@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="/static/css/product.css">
+{% endblock %}
+
+{% block content %}
+<div class="product-management">
+    <div class="page-header">
+        <h2>商品管理</h2>
+        <button class="btn btn-primary" id="createBtn" onclick="openCreateModal()">新增商品</button>
+    </div>
+    
+    <div class="search-filter">
+        <form id="searchForm" method="get" action="/product">
+            <input type="hidden" id="sort_by" name="sort_by" value="{{ sort_by or '' }}">
+            <input type="hidden" id="sort_order" name="sort_order" value="{{ sort_order or '' }}">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="search">搜索关键词</label>
+                    <input type="text" id="search" name="search" value="{{ search or '' }}" placeholder="请输入商品ID或名称">
+                </div>
+                <div class="form-group">
+                    <label for="status">商品状态</label>
+                    <select id="status" name="status">
+                        <option value="" {% if not status %}selected{% endif %}>全部</option>
+                        <option value="on_sale" {% if status == 'on_sale' %}selected{% endif %}>上架</option>
+                        <option value="off_sale" {% if status == 'off_sale' %}selected{% endif %}>下架</option>
+                        <option value="sold_out" {% if status == 'sold_out' %}selected{% endif %}>售罄</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="category">商品分类</label>
+                    <select id="category" name="category">
+                        <option value="" {% if not category %}selected{% endif %}>全部</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat }}" {% if category == cat %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="min_price">最低价格</label>
+                    <input type="number" id="min_price" name="min_price" value="{{ min_price or '' }}" placeholder="最低价格">
+                </div>
+                <div class="form-group">
+                    <label for="max_price">最高价格</label>
+                    <input type="number" id="max_price" name="max_price" value="{{ max_price or '' }}" placeholder="最高价格">
+                </div>
+                <div class="form-group">
+                    <label for="page_size">每页条数</label>
+                    <select id="page_size" name="page_size">
+                        <option value="10" {% if page_size == 10 %}selected{% endif %}>10</option>
+                        <option value="20" {% if page_size == 20 %}selected{% endif %}>20</option>
+                        <option value="50" {% if page_size == 50 %}selected{% endif %}>50</option>
+                        <option value="100" {% if page_size == 100 %}selected{% endif %}>100</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-search">搜索</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <div class="product-table">
+        <table>
+            <thead>
+                <tr>
+                    <th onclick="sortBy('id')">ID</th>
+                    <th onclick="sortBy('name')">商品名称</th>
+                    <th onclick="sortBy('price')">价格</th>
+                    <th>库存数量</th>
+                    <th onclick="sortBy('category')">商品分类</th>
+                    <th>商品图片</th>
+                    <th onclick="sortBy('status')">商品状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td ondblclick="enableEdit(this, {{ product.id }}, 'name')">{{ product.name }}</td>
+                    <td ondblclick="enableEdit(this, {{ product.id }}, 'price')">{{ product.price }}</td>
+                    <td class="{% if product.stock > 0 and product.stock < 10 %}stock-warning{% endif %}" ondblclick="enableEdit(this, {{ product.id }}, 'total_count')">{{ product.stock }}</td>
+                    <td>{{ product.category }}</td>
+                    <td>
+                        {% if product.image %}
+                        <img src="{{ product.image }}" class="product-image" alt="商品图片">
+                        {% else %}
+                        <span>无图片</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if product.status == 'on_sale' %}
+                        <span class="status status-on_sale">上架</span>
+                        {% elif product.status == 'off_sale' %}
+                        <span class="status status-off_sale">下架</span>
+                        {% elif product.status == 'sold_out' %}
+                        <span class="status status-sold_out">售罄</span>
+                        {% else %}
+                        <span class="status">{{ product.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-edit" onclick="openEditModal({{ product.id }})"><i class="fa fa-edit"></i> 编辑</button>
+                        <button class="btn btn-sm btn-toggle" onclick="toggleStatus({{ product.id }})"><i class="fa fa-exchange"></i> {% if product.status == 'on_sale' %}下架{% else %}上架{% endif %}</button>
+                        <button class="btn btn-sm btn-delete" onclick="deleteProduct({{ product.id }})"><i class="fa fa-trash"></i> 删除</button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="no-data">暂无数据</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="pagination">
+        <div class="page-info">
+            共 {{ total }} 条记录，第 {{ page }}/{{ total_pages }} 页
+        </div>
+        <div class="page-links">
+            <a href="/product?page=1&page_size={{ page_size }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% if sort_order %}&sort_order={{ sort_order }}{% endif %}{% endif %}" class="page-link" {% if page == 1 %}disabled{% endif %}>首页</a>
+            <a href="/product?page={{ page-1 }}&page_size={{ page_size }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% if sort_order %}&sort_order={{ sort_order }}{% endif %}{% endif %}" class="page-link" {% if page == 1 %}disabled{% endif %}>上一页</a>
+            
+            {% for i in range(1, total_pages + 1) %}
+            {% if i >= page - 2 and i <= page + 2 %}
+            <a href="/product?page={{ i }}&page_size={{ page_size }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% if sort_order %}&sort_order={{ sort_order }}{% endif %}{% endif %}" class="page-link {% if i == page %}active{% endif %}">{{ i }}</a>
+            {% endif %}
+            {% endfor %}
+            
+            <a href="/product?page={{ page+1 }}&page_size={{ page_size }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% if sort_order %}&sort_order={{ sort_order }}{% endif %}{% endif %}" class="page-link" {% if page == total_pages %}disabled{% endif %}>下一页</a>
+            <a href="/product?page={{ total_pages }}&page_size={{ page_size }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% if sort_order %}&sort_order={{ sort_order }}{% endif %}{% endif %}" class="page-link" {% if page == total_pages %}disabled{% endif %}>末页</a>
+        </div>
+    </div>
+</div>
+
+<!-- 新增商品模态框 -->
+<div id="createModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>新增商品</h3>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="createForm" onsubmit="return submitCreateForm();" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="name">商品名称</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="price">商品价格</label>
+                    <input type="number" id="price" name="price" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="total_count">库存数量</label>
+                    <input type="number" id="total_count" name="total_count" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">商品分类</label>
+                    <input type="text" id="category" name="category" required>
+                </div>
+                <div class="form-group">
+                    <label for="image">商品图片</label>
+                    <input type="file" id="image" name="image" accept="image/*">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑商品模态框 -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>编辑商品</h3>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="editForm" onsubmit="return submitEditForm();" enctype="multipart/form-data">
+                <input type="hidden" id="editProductId" name="product_id">
+                <div class="form-group">
+                    <label for="editName">商品名称</label>
+                    <input type="text" id="editName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPrice">商品价格</label>
+                    <input type="number" id="editPrice" name="price" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTotalCount">总数量</label>
+                    <input type="number" id="editTotalCount" name="total_count" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="editSoldCount">卖出数量</label>
+                    <input type="number" id="editSoldCount" name="sold_count" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="editCategory">商品分类</label>
+                    <input type="text" id="editCategory" name="category" required>
+                </div>
+                <div class="form-group">
+                    <label for="editStatus">商品状态</label>
+                    <select id="editStatus" name="status">
+                        <option value="on_sale">上架</option>
+                        <option value="off_sale">下架</option>
+                        <option value="sold_out">售罄</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editImage">商品图片</label>
+                    <input type="file" id="editImage" name="image" accept="image/*">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/product.js"></script>
+{% endblock %}

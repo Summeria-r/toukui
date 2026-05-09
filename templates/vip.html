@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="/static/css/vip.css">
+{% endblock %}                                                 
+{% block content %}
+<div class="vip-management">
+    <div class="page-header">
+        <h2>会员管理</h2>
+        <a href="/vip/export" class="btn btn-primary">导出Excel</a>
+    </div>
+    
+    <div class="search-filter">
+        <form id="searchForm" method="get" action="/vip">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="user_id">用户ID</label>
+                    <input type="number" id="user_id" name="user_id" value="{{ user_id or '' }}" placeholder="请输入用户ID">
+                </div>
+                <div class="form-group">
+                    <label for="status">会员状态</label>
+                    <select id="status" name="status">
+                        <option value="" {% if not status %}selected{% endif %}>全部</option>
+                        <option value="active" {% if status == 'active' %}selected{% endif %}>活跃</option>
+                        <option value="inactive" {% if status == 'inactive' %}selected{% endif %}>非活跃</option>
+                        <option value="frozen" {% if status == 'frozen' %}selected{% endif %}>冻结</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="end_date_min">到期开始日期</label>
+                    <input type="date" id="end_date_min" name="end_date_min" value="{{ end_date_min or '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="end_date_max">到期结束日期</label>
+                    <input type="date" id="end_date_max" name="end_date_max" value="{{ end_date_max or '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="page_size">每页条数</label>
+                    <select id="page_size" name="page_size">
+                        <option value="10" {% if page_size == 10 %}selected{% endif %}>10</option>
+                        <option value="20" {% if page_size == 20 %}selected{% endif %}>20</option>
+                        <option value="50" {% if page_size == 50 %}selected{% endif %}>50</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-search">搜索</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <div class="vip-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>用户ID</th>
+                    <th>会员状态</th>
+                    <th>开始日期</th>
+                    <th>结束日期</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vip in vips %}
+                <tr>
+                    <td>{{ vip.id }}</td>
+                    <td>{{ vip.user_id }}</td>
+                    <td>
+                        {% if vip.status == 'active' %}
+                        <span class="status status-active">活跃</span>
+                        {% elif vip.status == 'inactive' %}
+                        <span class="status status-inactive">非活跃</span>
+                        {% elif vip.status == 'frozen' %}
+                        <span class="status status-frozen">冻结</span>
+                        {% else %}
+                        <span class="status">{{ vip.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ vip.start_date }}</td>
+                    <td>{{ vip.end_date }}</td>
+                    <td>
+                        {% if vip.status == 'active' %}
+                        <button class="btn btn-freeze" onclick="updateStatus({{ vip.id }}, 'frozen')"><i class="fa fa-lock"></i> 冻结</button>
+                        {% elif vip.status == 'frozen' %}
+                        <button class="btn btn-sm btn-success" onclick="updateStatus({{ vip.id }}, 'active')"><i class="fa fa-unlock"></i> 解冻</button>
+                        {% else %}
+                        <button class="btn btn-sm btn-success" onclick="updateStatus({{ vip.id }}, 'active')"><i class="fa fa-play"></i> 激活</button>
+                        {% endif %}
+                        <button class="btn btn-delete" onclick="deleteVip({{ vip.id }})"><i class="fa fa-trash"></i> 删除</button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="no-data">暂无数据</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="pagination">
+        <div class="page-info">
+            共 {{ total }} 条记录，第 {{ page }}/{{ total_pages }} 页
+        </div>
+        <div class="page-links">
+            <a href="/vip?page=1&page_size={{ page_size }}{% if user_id %}&user_id={{ user_id }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if end_date_min %}&end_date_min={{ end_date_min }}{% endif %}{% if end_date_max %}&end_date_max={{ end_date_max }}{% endif %}" class="page-link" {% if page == 1 %}disabled{% endif %}>首页</a>
+            <a href="/vip?page={{ page-1 }}&page_size={{ page_size }}{% if user_id %}&user_id={{ user_id }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if end_date_min %}&end_date_min={{ end_date_min }}{% endif %}{% if end_date_max %}&end_date_max={{ end_date_max }}{% endif %}" class="page-link" {% if page == 1 %}disabled{% endif %}>上一页</a>
+            
+            {% for i in range(1, total_pages + 1) %}
+            {% if i >= page - 2 and i <= page + 2 %}
+            <a href="/vip?page={{ i }}&page_size={{ page_size }}{% if user_id %}&user_id={{ user_id }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if end_date_min %}&end_date_min={{ end_date_min }}{% endif %}{% if end_date_max %}&end_date_max={{ end_date_max }}{% endif %}" class="page-link {% if i == page %}active{% endif %}">{{ i }}</a>
+            {% endif %}
+            {% endfor %}
+            
+            <a href="/vip?page={{ page+1 }}&page_size={{ page_size }}{% if user_id %}&user_id={{ user_id }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if end_date_min %}&end_date_min={{ end_date_min }}{% endif %}{% if end_date_max %}&end_date_max={{ end_date_max }}{% endif %}" class="page-link" {% if page == total_pages %}disabled{% endif %}>下一页</a>
+            <a href="/vip?page={{ total_pages }}&page_size={{ page_size }}{% if user_id %}&user_id={{ user_id }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if end_date_min %}&end_date_min={{ end_date_min }}{% endif %}{% if end_date_max %}&end_date_max={{ end_date_max }}{% endif %}" class="page-link" {% if page == total_pages %}disabled{% endif %}>末页</a>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/vip.js"></script>
+{% endblock %}
