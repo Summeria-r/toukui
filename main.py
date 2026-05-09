@@ -3,7 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from tortoise.contrib.fastapi import register_tortoise
 from starlette.middleware.sessions import SessionMiddleware
-from config import SECRET_KEY, SESSION_MAX_AGE, TORTOISE_ORM, get_tortoise_config
+from config import SECRET_KEY, SESSION_MAX_AGE, get_tortoise_config
 
 from app.routers.login_router import login_router
 from app.routers.register_router import register_router
