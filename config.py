@@ -25,7 +25,7 @@ from typing import Dict
 # }
 def get_tortoise_config() -> Dict:
     # 把数据库名从railway改成toukuiinfo
-    database_url = "mysql://root:iUHSZUHUNPxkZpqAqXFZQyXFxRyWRmYC@mysql.railway.internal:3306/toukuiinfo?charset=utf8mb4"
+    database_url = "mysql://root:iUHSZUHUNPxkZpqAqXFZQyXFxRyWRmYC@tramway.proxy.rlwy.net:54156/toukuiinfo"
     return {
         "connections": {
             "default": database_url,
